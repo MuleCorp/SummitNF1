@@ -1,0 +1,35 @@
+body {
+    background-image: linear-gradient(180deg, #050505 0%, #0e459633 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+.font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+/* Efecto de Vidrio/F1 */
+.escuderia-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-left: 4px solid #0e4596;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Diferenciación del PODIO */
+.podium-0 { /* 1ero */
+    border-left: 6px solid #be579b;
+    background: linear-gradient(90deg, #be579b22, #0e459622);
+    transform: scale(1.03);
+    box-shadow: 0 0 25px #be579b33;
+}
+.podium-1 { border-left-color: #e2e8f0; } /* 2do */
+.podium-2 { border-left-color: #92400e; } /* 3ero */
+
+/* Animación de los SVGs (Cabezas) */
+.escuderia-svg {
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
