@@ -4,101 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NF1GO | Live Leaderboard</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
     <style>
-        :root { --f1-pink: #be579b; --f1-blue: #0e4596; --f1-dark: #050505; }
+        /* --- VARIABLES --- */
+        :root {
+            --f1-pink: #be579b;
+            --f1-blue: #0e4596;
+            --f1-dark: #050505;
+        }
+
         html { scroll-behavior: smooth; }
-        body { background-color: var(--f1-dark); color: white; font-family: 'Orbitron', sans-serif; margin: 0; }
-        
+
+        body {
+            background-color: var(--f1-dark);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- SECCIÓN 1: LEADERBOARD --- */
         #leaderboard-section {
             background-image: linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('assets/fondoboard.jpeg');
-            background-size: cover; background-attachment: fixed; background-position: center;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .logo-header {
+            max-width: 280px;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 10px rgba(14, 69, 150, 0.3));
         }
 
         .card-escuderia {
-            background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.05); border-left: 6px solid var(--f1-blue);
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 6px solid var(--f1-blue);
             transition: all 0.4s ease;
         }
 
-        .top-1 { border-left-color: var(--f1-pink); background: rgba(190, 87, 155, 0.1); transform: scale(1.02); }
-
-#awards-section {
-    /* Agregamos ?v=1 para forzar al navegador a descargarla de nuevo */
-    background-image: url('assets/podio_estatuillas.png?v=1');
-    background-size: cover; 
-    background-position: center bottom;
-    background-repeat: no-repeat;
-    height: 100vh; 
-    width: 100%; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: flex-end;
-    position: relative; 
-    box-shadow: inset 0 100px 80px -50px var(--f1-dark);
-}
-
-        .podium-label {
-            font-weight: 900; text-transform: uppercase; font-style: italic; text-align: center;
-            width: 33.33%; text-shadow: 0 0 15px #000, 0 0 30px #000; line-height: 1; z-index: 10;
+        .top-1 { 
+            border-left-color: var(--f1-pink); 
+            background: linear-gradient(90deg, rgba(190, 87, 155, 0.15), rgba(20,20,20,0.7));
+            transform: scale(1.02);
         }
 
+        /* --- SECCIÓN 2: PREMIACIÓN (AJUSTES PITS) --- */
+        #awards-section {
+            /* NUEVO: Capa negra al 60% para bajar opacidad de la foto */
+            background-image: linear-gradient(rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.6)), url('assets/podio_estatuillas.png?v=1');
+            
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            height: 100vh; /* Ocupa toda la pantalla */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            box-shadow: inset 0 100px 80px -50px var(--f1-dark);
+        }
+
+        /* Estilos base para el bloque que flota en el podio */
+        .podium-display {
+            @apply font-black uppercase italic text-center;
+            text-shadow: 0 0 15px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,1);
+            line-height: 1;
+            z-index: 10;
+        }
+
+        /* Los SVGs en el podio (cabezas) */
+        .podium-svg {
+            @apply rounded-full object-contain mx-auto;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Botón de navegación */
         .btn-go-awards {
-            background: var(--f1-pink); padding: 16px 32px; border-radius: 4px; display: inline-block;
+            background: var(--f1-pink);
+            padding: 16px 32px;
+            border-radius: 4px;
+            display: inline-block;
             box-shadow: 0 0 20px rgba(190, 87, 155, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-go-awards:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(190, 87, 155, 0.6); }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-row { animation: fadeInUp 0.5s ease forwards; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-row { animation: fadeInUp 0.5s ease forwards; }
     </style>
 </head>
 <body>
 
     <section id="leaderboard-section" class="min-h-screen py-12 px-4">
         <header class="text-center mb-16">
-            <img src="assets/NF1GO.svg" alt="Logo" class="max-w-[250px] mx-auto" onerror="this.style.display='none'">
+            <img src="assets/NF1GO.svg" alt="NF1GO Logo" class="logo-header" onerror="this.style.display='none'">
             <div class="h-1 w-32 bg-[#be579b] mx-auto mt-6 rounded-full opacity-50"></div>
         </header>
 
-        <div id="leaderboard-container" class="max-w-3xl mx-auto space-y-4 mb-20 text-center text-zinc-500 font-bold uppercase tracking-widest italic">
-            Sincronizando telemetría...
+        <div id="leaderboard-container" class="max-w-3xl mx-auto space-y-4 mb-20">
+            <div class="text-center text-zinc-600 animate-pulse">Sincronizando telemetría...</div>
         </div>
 
-        <div class="text-center">
-            <a href="#s-section" class="btn-go-s font-black italic uppercase text-sm tracking-widest">
+        <div class="text-center pb-12">
+            <a href="#awards-section" class="btn-go-awards font-black italic uppercase tracking-widest text-sm">
                 Ir a Premiación ↓
             </a>
         </div>
     </section>
 
     <section id="awards-section">
-        <div id="podium-names" class="w-full max-w-7xl mx-auto flex items-end justify-center pb-12 px-4"></div>
+        <div class="absolute top-10 text-center w-full">
+            <h2 class="font-black italic text-xl md:text-3xl tracking-[0.4em] text-white/40 uppercase">Parrilla de Ganadores</h2>
+        </div>
+        
+        <div id="podium-names" class="w-full max-w-7xl mx-auto flex items-end justify-center pb-20 px-4">
+            </div>
     </section>
 
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwraDukAcjF87JOC550ef9BPkvodXFl3Nufj_SyzY7accOW78XB-fuo8ResMAHpnTF/exec';
 
-        async function updateData() {
+        async function updateLeaderboard() {
             try {
-                // Forzamos la limpieza de caché con un timestamp
+                // Fetch de datos con cache-buster para telemetría directa
                 const response = await fetch(`${WEB_APP_URL}?t=${Date.now()}`);
-                if (!response.ok) throw new Error("Google no responde");
-                
                 const data = await response.json();
                 
-                // Mapeo automático basado en posición de columna
+                // Mapeo dinámico: A=Nombre, B=Puntos, C=SVG
                 const teams = data.map(t => {
-                    const v = Object.values(t);
-                    return { name: v[0], score: parseInt(v[1]) || 0, svg: v[2] || "E01" };
+                    const keys = Object.keys(t);
+                    return {
+                        name: t[keys[0]], 
+                        score: parseInt(t[keys[1]]) || 0,
+                        svg: t[keys[2]]?.toString().trim() || "E01"
+                    };
                 }).sort((a, b) => b.score - a.score);
 
                 renderList(teams);
                 renderPodium(teams);
-            } catch (err) {
-                console.error("Error:", err);
-                document.getElementById('leaderboard-container').innerHTML = 
-                    `<div class="text-red-500">ERROR DE CONEXIÓN<br><small class="text-zinc-600 font-normal">Verifica que el script esté publicado como 'Cualquier Persona'</small></div>`;
+
+            } catch (error) {
+                console.error("Error en boxes:", error);
             }
         }
 
@@ -106,12 +170,12 @@
             const container = document.getElementById('leaderboard-container');
             container.innerHTML = teams.map((team, i) => `
                 <div class="card-escuderia ${i === 0 ? 'top-1' : ''} flex items-center justify-between p-5 rounded-r-2xl animate-row" style="animation-delay: ${i*0.05}s">
-                    <div class="flex items-center gap-6 text-left">
+                    <div class="flex items-center gap-6">
                         <span class="text-3xl font-black italic ${i === 0 ? 'text-[#be579b]' : 'text-zinc-700'} w-12">${i+1}</span>
                         <img src="assets/${team.svg}.svg" class="w-16 h-16 object-contain" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=${i}'">
                         <h2 class="text-2xl md:text-3xl font-black uppercase italic tracking-tighter">${team.name}</h2>
                     </div>
-                    <div class="text-right min-w-[80px]">
+                    <div class="text-right">
                         <div class="text-4xl font-black ${i === 0 ? 'text-[#be579b]' : 'text-white'}">${team.score}</div>
                         <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Puntos</div>
                     </div>
@@ -121,16 +185,37 @@
 
         function renderPodium(teams) {
             const container = document.getElementById('podium-names');
-            const p = [teams[0] || {name:''}, teams[1] || {name:''}, teams[2] || {name:''}];
+            const p1 = teams[0] || { name: '---', svg: 'E01' };
+            const p2 = teams[1] || { name: '---', svg: 'E01' };
+            const p3 = teams[2] || { name: '---', svg: 'E01' };
+
+            // NUEVA LÓGICA DE PODIO CON SVG Y NOMBRE
+            // Los mb (margen inferior) posicionan el bloque sobre la estatuilla de la foto.
+            // Reparto: PLATA (Izq) - ORO (Centro) - BRONCE (Der)
+            
             container.innerHTML = `
-                <div class="podium-label mb-32 text-xl md:text-3xl">${p[1].name}</div>
-                <div class="podium-label mb-56 text-3xl md:text-5xl text-[#be579b]">${p[0].name}</div>
-                <div class="podium-label mb-24 text-lg md:text-2xl text-orange-200">${p[2].name}</div>
+                <div class="flex flex-col items-center podium-display w-1/3 mb-20 animate-row">
+                    <img src="assets/${p2.svg}.svg" class="podium-svg w-32 h-32 mb-6 border-4 border-slate-400 p-2 bg-zinc-900/40">
+                    <div class="text-white text-xl md:text-2xl tracking-tighter">${p2.name}</div>
+                </div>
+
+                <div class="flex flex-col items-center podium-display w-1/3 mb-40 animate-row">
+                    <img src="assets/${p1.svg}.svg" class="podium-svg w-40 h-40 mb-8 border-4 border-[#be579b] p-2 bg-zinc-900/60 shadow-xl">
+                    <div class="text-[#be579b] text-3xl md:text-4xl tracking-tighter">${p1.name}</div>
+                </div>
+
+                <div class="flex flex-col items-center podium-display w-1/3 mb-16 animate-row">
+                    <img src="assets/${p3.svg}.svg" class="podium-svg w-28 h-28 mb-5 border-4 border-amber-700 p-2 bg-zinc-900/40">
+                    <div class="text-orange-200 text-lg md:text-xl tracking-tighter">${p3.name}</div>
+                </div>
             `;
         }
 
-        updateData();
-        setInterval(updateData, 10000); // Cada 10 segundos
+        // Inicio
+        updateLeaderboard();
+        // Sincronización cada 10 segundos
+        setInterval(updateLeaderboard, 10000);
+
     </script>
 </body>
 </html>
