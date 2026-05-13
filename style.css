@@ -40,9 +40,14 @@ body {
 
 /* Estilos de los nombres en el podio */
 .podium-label {
-    @apply font-black uppercase italic text-center text-white;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-    width: 200px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-style: italic;
+    text-align: center;
+    width: 250px; /* Ancho para que el nombre no se rompa */
+    text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.5);
+    line-height: 1;
 }
 
 .btn-awards {
