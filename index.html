@@ -3,38 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NF1GO Leaderboard & Awards</title>
+    <title>NF1GO | Live Leaderboard</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-[#050505]">
 
-    <section id="leaderboard-section" class="py-10 px-4 md:px-8">
-        <header class="text-center mb-12">
-            <img src="assets/NF1GO.svg" alt="Logo" class="logo-header">
-            <div class="h-1 w-24 bg-[#be579b] mx-auto mt-4 rounded-full"></div>
+    <style>
+        /* --- TUS COLORES Y VARIABLES --- */
+        :root {
+            --f1-pink: #be579b;
+            --f1-blue: #0e4596;
+            --f1-dark: #050505;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--f1-dark);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- SECCIÓN 1: LEADERBOARD --- */
+        #leaderboard-section {
+            background-image: linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('assets/fondoboard.jpeg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .logo-header {
+            max-width: 280px;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 10px rgba(14, 69, 150, 0.3));
+        }
+
+        .card-escuderia {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 6px solid var(--f1-blue);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .top-1 { 
+            border-left-color: var(--f1-pink); 
+            background: linear-gradient(90deg, rgba(190, 87, 155, 0.15), rgba(20,20,20,0.7));
+            transform: scale(1.02);
+        }
+
+        /* --- SECCIÓN 2: PREMIACIÓN (PANTALLA COMPLETA) --- */
+        #awards-section {
+            background-image: url('assets/podio_estatuillas.jpg');
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            height: 100vh; /* Ocupa toda la pantalla */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            box-shadow: inset 0 100px 80px -50px var(--f1-dark);
+        }
+
+        /* Nombres sobre las estatuillas */
+        .podium-label {
+            font-weight: 900;
+            text-transform: uppercase;
+            font-style: italic;
+            text-align: center;
+            width: 33.33%;
+            text-shadow: 0 0 15px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,1);
+            line-height: 1;
+            z-index: 10;
+        }
+
+        /* Botón de navegación */
+        .btn-go-awards {
+            background: var(--f1-pink);
+            padding: 16px 32px;
+            border-radius: 4px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(190, 87, 155, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-go-awards:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(190, 87, 155, 0.6); }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-row { animation: fadeInUp 0.5s ease forwards; }
+
+    </style>
+</head>
+<body>
+
+    <section id="leaderboard-section" class="min-h-screen py-12 px-4">
+        <header class="text-center mb-16">
+            <img src="assets/NF1GO.svg" alt="NF1GO Logo" class="logo-header">
+            <div class="h-1 w-32 bg-[#be579b] mx-auto mt-6 rounded-full opacity-50"></div>
         </header>
 
-        <div id="leaderboard" class="max-w-3xl mx-auto space-y-4 mb-16">
-            </div>
+        <div id="leaderboard-container" class="max-w-3xl mx-auto space-y-4 mb-20">
+            <div class="text-center text-zinc-600 animate-pulse">Sincronizando telemetría...</div>
+        </div>
 
-        <div class="text-center pb-10">
-            <a href="#awards-section" class="btn-primary font-black italic uppercase tracking-widest text-sm">
-                Ir a Ceremonia de Premios ↓
+        <div class="text-center">
+            <a href="#awards-section" class="btn-go-awards font-black italic uppercase tracking-widest text-sm">
+                Ir a Premiación ↓
             </a>
         </div>
     </section>
 
-    <section id="awards-section" class="h-screen w-full flex flex-col items-center justify-end pb-12 relative overflow-hidden">
-        <div class="absolute top-10 text-center w-full">
-            <h2 class="font-black italic text-2xl tracking-[0.4em] text-white/50 uppercase">Podium Nacional</h2>
-        </div>
-        
-        <div id="podium-container" class="w-full max-w-6xl flex justify-center items-end gap-2 md:gap-8">
+    <section id="awards-section">
+        <div id="podium-names" class="w-full max-w-7xl mx-auto flex items-end justify-center pb-12 px-4">
             </div>
     </section>
 
-    <script src="script.js"></script>
+    <script>
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwraDukAcjF87JOC550ef9BPkvodXFl3Nufj_SyzY7accOW78XB-fuo8ResMAHpnTF/exec';
+
+        async function updateLeaderboard() {
+            try {
+                // Fetch de datos (agregamos timestamp para evitar caché)
+                const response = await fetch(`${WEB_APP_URL}?t=${new Date().getTime()}`);
+                const data = await response.json();
+                
+                // Mapeo inteligente de las columnas del Sheets
+                const teams = data.map(t => {
+                    const keys = Object.keys(t);
+                    return {
+                        name: t[keys[0]], 
+                        score: parseInt(t[keys[1]]) || 0,
+                        svg: t[keys[2]]?.toString().trim() || "E01"
+                    };
+                }).sort((a, b) => b.score - a.score);
+
+                renderList(teams);
+                renderPodium(teams);
+
+            } catch (error) {
+                console.error("Error en boxes:", error);
+            }
+        }
+
+        function renderList(teams) {
+            const container = document.getElementById('leaderboard-container');
+            container.innerHTML = teams.map((team, i) => `
+                <div class="card-escuderia ${i === 0 ? 'top-1' : ''} flex items-center justify-between p-5 rounded-r-2xl animate-row" style="animation-delay: ${i*0.05}s">
+                    <div class="flex items-center gap-6">
+                        <span class="text-3xl font-black italic ${i === 0 ? 'text-[#be579b]' : 'text-zinc-700'} w-12">${i+1}</span>
+                        <img src="assets/${team.svg}.svg" class="w-16 h-16 object-contain" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=${i}'">
+                        <h2 class="text-2xl md:text-3xl font-black uppercase italic tracking-tighter">${team.name}</h2>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-4xl font-black ${i === 0 ? 'text-[#be579b]' : 'text-white'}">${team.score}</div>
+                        <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Puntos</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPodium(teams) {
+            const container = document.getElementById('podium-names');
+            const p1 = teams[0] || { name: '' };
+            const p2 = teams[1] || { name: '' };
+            const p3 = teams[2] || { name: '' };
+
+            // Ajuste de márgenes (mb) para que caigan justo sobre las cabezas de la foto
+            container.innerHTML = `
+                <div class="podium-label mb-32 text-xl md:text-3xl">${p2.name}</div>
+                <div class="podium-label mb-56 text-3xl md:text-5xl text-[#be579b]">${p1.name}</div>
+                <div class="podium-label mb-24 text-lg md:text-2xl text-orange-200">${p3.name}</div>
+            `;
+        }
+
+        // Inicio
+        updateLeaderboard();
+        // Sincronización cada 10 segundos
+        setInterval(updateLeaderboard, 10000);
+
+    </script>
 </body>
 </html>
