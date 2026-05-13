@@ -51,9 +51,9 @@
             width: 100%; 
             display: flex; 
             flex-direction: column; 
-            justify-content: flex-end; /* Alinea los cilindros al suelo */
+            justify-content: flex-end; 
             position: relative;
-            padding-top: 80px; /* Evita que el SVG pegue arriba */
+            padding-top: 80px; 
         }
 
         /* --- ESTRUCTURA DEL PODIO --- */
@@ -74,13 +74,17 @@
             position: relative;
             box-shadow: inset 0 10px 20px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.8);
             z-index: 1;
+            /* NUEVO: Centrado del nombre dentro del cilindro */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .base-gold { background: linear-gradient(135deg, #712d5a 0%, var(--f1-pink) 50%, #4a1d3b 100%); border-top: 3px solid #fbcfe8; }
         .base-silver { background: linear-gradient(135deg, #1e293b 0%, #94a3b8 50%, #0f172a 100%); border-top: 3px solid #e2e8f0; }
         .base-bronze { background: linear-gradient(135deg, #451a03 0%, #b45309 50%, #27170a 100%); border-top: 3px solid #fbbf24; }
 
-        /* El nombre pisando el cilindro */
+        /* El nombre como placa centrada */
         .podium-name {
             width: 100%;
             text-align: center;
@@ -91,7 +95,6 @@
             z-index: 20;
             color: white !important;
             white-space: nowrap;
-            margin-bottom: -38px; /* HUNDIMIENTO EN EL CILINDRO */
             position: relative;
         }
 
@@ -101,7 +104,7 @@
             filter: drop-shadow(0 0 20px rgba(0,0,0,1));
             z-index: 5;
             position: relative;
-            margin-bottom: -45px; /* CONEXIÓN CON EL NOMBRE */
+            margin-bottom: -40px; /* Hundimiento para que apoye sobre el cilindro */
         }
 
         /* La cabeza (SVG) */
@@ -169,7 +172,6 @@
 
         async function updateLeaderboard() {
             try {
-                // Fetch con timestamp para evitar caché
                 const response = await fetch(`${WEB_APP_URL}?t=${Date.now()}`);
                 const data = await response.json();
                 
@@ -212,33 +214,35 @@
             const p2 = teams[1] || {name: '', svg: 'E01'};
             const p3 = teams[2] || {name: '', svg: 'E01'};
 
+            // Los nombres ahora se inyectan DENTRO del cylinder-base
             container.innerHTML = `
                 <div class="cylinder-podium animate-row" style="animation-delay: 0.1s">
                     <img src="assets/${p2.svg}.svg" class="podium-svg w-28 h-28">
                     <img src="assets/plata.png" class="statuette-img w-[170px]">
-                    <div class="podium-name text-lg md:text-xl font-bold">${p2.name}</div>
-                    <div class="cylinder-base base-silver h-28 md:h-36"></div>
+                    <div class="cylinder-base base-silver h-28 md:h-36">
+                        <div class="podium-name text-lg md:text-xl font-bold">${p2.name}</div>
+                    </div>
                 </div>
 
                 <div class="cylinder-podium animate-row">
                     <img src="assets/${p1.svg}.svg" class="podium-svg w-36 h-36">
                     <img src="assets/oro.png" class="statuette-img w-[210px]">
-                    <div class="podium-name text-xl md:text-3xl font-black tracking-tighter">${p1.name}</div>
-                    <div class="cylinder-base base-gold h-40 md:h-56"></div>
+                    <div class="cylinder-base base-gold h-40 md:h-56">
+                        <div class="podium-name text-xl md:text-3xl font-black tracking-tighter">${p1.name}</div>
+                    </div>
                 </div>
 
                 <div class="cylinder-podium animate-row" style="animation-delay: 0.2s">
                     <img src="assets/${p3.svg}.svg" class="podium-svg w-24 h-24">
                     <img src="assets/bronce.png" class="statuette-img w-[150px]">
-                    <div class="podium-name text-base md:text-lg font-bold">${p3.name}</div>
-                    <div class="cylinder-base base-bronze h-20 md:h-28"></div>
+                    <div class="cylinder-base base-bronze h-20 md:h-28">
+                        <div class="podium-name text-base md:text-lg font-bold">${p3.name}</div>
+                    </div>
                 </div>
             `;
         }
 
-        // Ejecutar al cargar
         updateLeaderboard();
-        // Actualizar cada 10 segundos
         setInterval(updateLeaderboard, 10000);
     </script>
 </body>
