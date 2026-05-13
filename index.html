@@ -56,14 +56,17 @@
         }
 
         .statuette-icon {
-            width: 50px; height: auto; margin-top: 10px;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));
+            width: 150px; /* Tamaño triplicado */
+            height: auto;
+            margin-top: 20px; /* Más espacio */
+            filter: drop-shadow(0 0 12px rgba(255,255,255,0.3)); /* Sombra más fuerte */
         }
 
         /* Botón y Título Inferior */
-        .btn-go-awards { background: var(--f1-pink); padding: 16px 32px; border-radius: 4px; box-shadow: 0 0 20px rgba(190, 87, 155, 0.3); }
+        .btn-go-awards { background: var(--f1-pink); padding: 16px 32px; border-radius: 4px; box-shadow: 0 0 20px rgba(190, 87, 155, 0.3); transition: transform 0.3s ease; }
+        .btn-go-awards:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(190, 87, 155, 0.6); }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateX(0); } }
         .animate-row { animation: fadeInUp 0.5s ease forwards; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
@@ -72,7 +75,7 @@
 
     <section id="leaderboard-section" class="min-h-screen py-12 px-4">
         <header class="text-center mb-12">
-            <img src="assets/NF1GO.svg" alt="Logo" class="max-w-[280px] mx-auto">
+            <img src="assets/NF1GO.svg" alt="Logo" class="max-w-[280px] mx-auto" onerror="this.style.display='none'">
             <div class="h-1 w-32 bg-[#be579b] mx-auto mt-6 rounded-full opacity-50"></div>
         </header>
         <div id="leaderboard-container" class="max-w-3xl mx-auto space-y-4 mb-20 text-center text-zinc-600 animate-pulse uppercase italic font-bold">
@@ -88,7 +91,7 @@
             </div>
 
         <div class="w-full text-center pb-6">
-            <h2 class="font-black italic text-lg md:text-xl tracking-[0.5em] text-white/30 uppercase">Parrilla de Ganadores</h2>
+            <h2 class="font-f1 font-black italic text-lg md:text-xl tracking-[0.5em] text-white/30 uppercase">Parrilla de Ganadores</h2>
         </div>
     </section>
 
@@ -97,11 +100,18 @@
 
         async function updateLeaderboard() {
             try {
+                // Fetch de datos con cache-buster para telemetría directa
                 const response = await fetch(`${WEB_APP_URL}?t=${Date.now()}`);
                 const data = await response.json();
+                
+                // Mapeo dinámico: A=Nombre, B=Puntos, C=SVG
                 const teams = data.map(t => {
-                    const v = Object.values(t);
-                    return { name: v[0], score: parseInt(v[1]) || 0, svg: v[2] || "E01" };
+                    const keys = Object.keys(t);
+                    return {
+                        name: t[keys[0]], 
+                        score: parseInt(t[keys[1]]) || 0,
+                        svg: t[keys[2]]?.toString().trim() || "E01"
+                    };
                 }).sort((a, b) => b.score - a.score);
 
                 renderList(teams);
@@ -113,12 +123,12 @@
             const container = document.getElementById('leaderboard-container');
             container.innerHTML = teams.map((team, i) => `
                 <div class="card-escuderia ${i === 0 ? 'top-1' : ''} flex items-center justify-between p-5 rounded-r-2xl animate-row" style="animation-delay: ${i*0.05}s">
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-6 text-left">
                         <span class="text-3xl font-black italic ${i === 0 ? 'text-[#be579b]' : 'text-zinc-700'} w-12">${i+1}</span>
                         <img src="assets/${team.svg}.svg" class="w-16 h-16 object-contain" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=${i}'">
                         <h2 class="text-2xl md:text-3xl font-black uppercase italic tracking-tighter">${team.name}</h2>
                     </div>
-                    <div class="text-right">
+                    <div class="text-right min-w-[80px]">
                         <div class="text-4xl font-black ${i === 0 ? 'text-[#be579b]' : 'text-white'}">${team.score}</div>
                         <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Puntos</div>
                     </div>
@@ -128,33 +138,36 @@
 
         function renderPodium(teams) {
             const container = document.getElementById('podium-names');
-            const p = [teams[0] || {name: '---', svg: 'E01'}, teams[1] || {name: '---', svg: 'E01'}, teams[2] || {name: '---', svg: 'E01'}];
+            const p1 = teams[0] || {name: '---', svg: 'E01'};
+            const p2 = teams[1] || {name: '---', svg: 'E01'};
+            const p3 = teams[2] || {name: '---', svg: 'E01'};
 
+            // NUEVA LÓGICA DE PODIO CON SVG, NOMBRE Y ESTATUILLA GRANDE
             // PLATA (Izq) - ORO (Centro) - BRONCE (Der)
-            // Aumentamos los márgenes (mb) para que queden bien arriba alineados con la foto
+            // Ajustamos márgenes (mb) para coincidir con la foto
+            
             container.innerHTML = `
-                <div class="podium-display w-1/3 mb-56">
-                    <img src="assets/${p[1].svg}.svg" class="podium-svg w-28 h-28 mb-4">
-                    <div class="podium-name text-white text-xl md:text-2xl font-bold">${p[1].name}</div>
+                <div class="podium-display w-1/3 mb-52 animate-row">
+                    <img src="assets/${p2.svg}.svg" class="podium-svg w-28 h-28 mb-4">
+                    <div class="podium-name text-white text-xl md:text-2xl font-bold tracking-tight">${p2.name}</div>
                     <img src="assets/plata.png" class="statuette-icon">
                 </div>
 
-                <div class="podium-display w-1/3 mb-72">
-                    <img src="assets/${p[0].svg}.svg" class="podium-svg w-36 h-36 mb-4">
-                    <div class="podium-name text-[#be579b] text-3xl md:text-4xl font-black">${p[0].name}</div>
-                    <img src="assets/oro.png" class="statuette-icon w-[60px]">
-                </div>
+                <div class="podium-display w-1/3 mb-80 animate-row" style="animation-delay: 0.1s">
+                    <img src="assets/${p1.svg}.svg" class="podium-svg w-36 h-36 mb-6">
+                    <div class="podium-name text-[#be579b] text-3xl md:text-4xl font-black tracking-tight">${p1.name}</div>
+                    <img src="assets/oro.png" class="statuette-icon w-[180px]"> </div>
 
-                <div class="podium-display w-1/3 mb-48">
-                    <img src="assets/${p[2].svg}.svg" class="podium-svg w-24 h-24 mb-4">
-                    <div class="podium-name text-orange-200 text-lg md:text-xl font-bold">${p[2].name}</div>
+                <div class="podium-display w-1/3 mb-44 animate-row" style="animation-delay: 0.2s">
+                    <img src="assets/${p3.svg}.svg" class="podium-svg w-24 h-24 mb-4">
+                    <div class="podium-name text-orange-200 text-lg md:text-xl font-bold tracking-tight">${p3.name}</div>
                     <img src="assets/bronce.png" class="statuette-icon">
                 </div>
             `;
         }
 
         updateLeaderboard();
-        setInterval(updateLeaderboard, 10000);
+        setInterval(updateLeaderboard, 10000); // Sincronización cada 10 segundos
     </script>
 </body>
 </html>
