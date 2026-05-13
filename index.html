@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NF1GO Leaderboard</title>
+    <title>NF1GO Leaderboard & Awards</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-[#050505]">
 
-    <section id="main-board" class="min-h-screen p-4 md:p-8">
+    <section id="leaderboard-section" class="py-10 px-4 md:px-8">
         <header class="text-center mb-12">
             <img src="assets/NF1GO.svg" alt="Logo" class="logo-header">
             <div class="h-1 w-24 bg-[#be579b] mx-auto mt-4 rounded-full"></div>
         </header>
 
-        <main id="leaderboard" class="max-w-3xl mx-auto space-y-4 mb-20">
-            </main>
-        
-        <div class="text-center">
-            <a href="#awards-section" class="btn-awards font-black italic uppercase tracking-widest text-sm">
-                Ir a Premiación ↓
+        <div id="leaderboard" class="max-w-3xl mx-auto space-y-4 mb-16">
+            </div>
+
+        <div class="text-center pb-10">
+            <a href="#awards-section" class="btn-primary font-black italic uppercase tracking-widest text-sm">
+                Ir a Ceremonia de Premios ↓
             </a>
         </div>
     </section>
 
-    <section id="awards-section" class="min-h-screen flex flex-col items-center justify-end pb-20 relative">
-        <div id="podium-container" class="w-full max-w-5xl flex justify-center items-end gap-4 md:gap-10">
+    <section id="awards-section" class="h-screen w-full flex flex-col items-center justify-end pb-12 relative overflow-hidden">
+        <div class="absolute top-10 text-center w-full">
+            <h2 class="font-black italic text-2xl tracking-[0.4em] text-white/50 uppercase">Podium Nacional</h2>
+        </div>
+        
+        <div id="podium-container" class="w-full max-w-6xl flex justify-center items-end gap-2 md:gap-8">
             </div>
     </section>
 
