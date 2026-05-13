@@ -1,31 +1,41 @@
+:root {
+    --f1-pink: #be579b;
+    --f1-blue: #0e4596;
+    --f1-dark: #050505;
+}
+
 body {
-    background-image: linear-gradient(180deg, #050505 0%, #0e459633 100%);
-    font-family: 'Inter', sans-serif;
+    background-color: var(--f1-dark);
+    background-image: 
+        radial-gradient(circle at top right, rgba(14, 69, 150, 0.15), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(190, 87, 155, 0.1), transparent 40%);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
 }
 
-.font-orbitron { font-family: 'Orbitron', sans-serif; }
-
-/* Efecto de Vidrio/F1 */
-.escuderia-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border-left: 4px solid #0e4596;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.logo-header {
+    max-width: 280px;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 15px rgba(14, 69, 150, 0.5));
 }
 
-/* Diferenciación del PODIO */
-.podium-0 { /* 1ero */
-    border-left: 6px solid #be579b;
-    background: linear-gradient(90deg, #be579b22, #0e459622);
-    transform: scale(1.03);
-    box-shadow: 0 0 25px #be579b33;
+.card-escuderia {
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 5px solid var(--f1-blue);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.podium-1 { border-left-color: #e2e8f0; } /* 2do */
-.podium-2 { border-left-color: #92400e; } /* 3ero */
 
-/* Animación de los SVGs (Cabezas) */
+.top-1 { 
+    border-left: 8px solid var(--f1-pink); 
+    background: linear-gradient(90deg, rgba(190, 87, 155, 0.2) 0%, rgba(5,5,5,1) 100%);
+    transform: scale(1.05);
+}
+.top-2 { border-left-color: #e2e8f0; }
+.top-3 { border-left-color: #92400e; }
+
 .escuderia-svg {
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
     animation: float 3s ease-in-out infinite;
 }
 
@@ -33,3 +43,10 @@ body {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
 }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-row { animation: slideIn 0.5s ease forwards; }
