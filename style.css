@@ -5,13 +5,29 @@
 }
 
 body {
-    background-color: var(--f1-dark);
+    background-color: var(--f1-dark); /* Color de fondo por si no carga la imagen */
+    
+    /* CONFIGURACIÓN DE LA IMAGEN DE FONDO */
     background-image: 
-        radial-gradient(circle at top right, rgba(14, 69, 150, 0.15), transparent 40%),
-        radial-gradient(circle at bottom left, rgba(190, 87, 155, 0.1), transparent 40%);
+        /* 1. Superponemos degradados sutiles para dar profundidad y mantener identidad de color */
+        radial-gradient(circle at top right, rgba(14, 69, 150, 0.2), transparent 60%),
+        radial-gradient(circle at bottom left, rgba(190, 87, 155, 0.15), transparent 60%),
+        /* 2. Capa oscura para oscurecer la foto y que se lea bien el texto */
+        linear-gradient(rgba(5, 5, 5, 0.8), rgba(5, 5, 5, 0.9)),
+        /* 3. TU IMAGEN DE FONDO */
+        url('assets/fondoboard.jpeg'); 
+
+    background-size: cover;          /* Cubre toda la pantalla */
+    background-position: center;     /* Centra la imagen */
+    background-repeat: no-repeat;    /* No repite la imagen */
+    background-attachment: fixed;    /* Efecto parallax: la imagen se queda fija al hacer scroll (se ve muy pro) */
+    
     color: white;
     font-family: 'Orbitron', sans-serif;
+    min-h-screen; /* Asegura que cubra todo el alto */
 }
+
+/* --- Resto del código CSS (igual que antes) --- */
 
 .logo-header {
     max-width: 280px;
@@ -20,16 +36,19 @@ body {
 }
 
 .card-escuderia {
-    background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* Hacemos las tarjetas un poco más opacas para que resalten sobre el nuevo fondo */
+    background: rgba(10, 10, 10, 0.7); 
+    backdrop-filter: blur(5px); /* Efecto cristal esmerilado */
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-left: 5px solid var(--f1-blue);
     transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .top-1 { 
     border-left: 8px solid var(--f1-pink); 
-    background: linear-gradient(90deg, rgba(190, 87, 155, 0.2) 0%, rgba(5,5,5,1) 100%);
+    background: linear-gradient(90deg, rgba(190, 87, 155, 0.3) 0%, rgba(10,10,10,0.8) 100%);
     transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .top-2 { border-left-color: #e2e8f0; }
 .top-3 { border-left-color: #92400e; }
