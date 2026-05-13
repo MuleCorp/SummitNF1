@@ -69,3 +69,35 @@ body {
 }
 
 .animate-row { animation: slideIn 0.5s ease forwards; }
+
+/* --- ESTILOS DEL PODIO VISUAL --- */
+.podium-step {
+    @apply flex flex-col items-center justify-end pb-4 rounded-t-lg transition-all duration-1000;
+    width: 30%;
+}
+
+/* Plata (2do) */
+.step-silver {
+    height: 70%;
+    background: linear-gradient(to top, #475569, #94a3b8);
+    border-top: 4px solid #e2e8f0;
+}
+
+/* Oro (1er) */
+.step-gold {
+    height: 100%;
+    background: linear-gradient(to top, #712d5a, var(--f1-pink));
+    border-top: 4px solid #fbcfe8;
+    box-shadow: 0 0 30px rgba(190, 87, 155, 0.4);
+}
+
+/* Bronce (3er) */
+.step-bronze {
+    height: 50%;
+    background: linear-gradient(to top, #78350f, #b45309);
+    border-top: 4px solid #fbbf24;
+}
+
+.podium-name {
+    @apply font-black uppercase italic text-center text-xs md:text-sm px-2 mb-2 leading-none;
+}
