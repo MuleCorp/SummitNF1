@@ -2,55 +2,28 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSh1R3viWQTZFYJ
 
 async function updateLeaderboard() {
     try {
-        // Agregamos un número aleatorio único para romper el cache del navegador y de Google
-        const cacheBuster = `&nocache=${Math.random()}`;
-        
-        const response = await fetch(CSV_URL + cacheBuster, {
-            method: 'GET',
-            cache: 'no-store', // <--- ESTO ES CLAVE
-            headers: {
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache'
-            }
+        // El 'nocache' obliga a Google y al navegador a darnos el dato real
+        const response = await fetch(`${CSV_URL}&nocache=${Math.random()}`, {
+            cache: 'no-store'
         });
-
-        if (!response.ok) throw new Error('Error de conexión');
         
         const data = await response.text();
-        
-        // Procesar Filas
         const rows = data.split('\n').filter(row => row.trim() !== '');
+        
         const teams = rows.slice(1).map(row => {
             const columns = row.split(',');
             return {
-                name: columns[0]?.trim() || "Escudería",
+                name: columns[0]?.trim(),
                 score: parseInt(columns[1]) || 0,
                 svgId: columns[2]?.trim() || "E01"
             };
         });
 
-        // Ordenar
         teams.sort((a, b) => b.score - a.score);
-
-        // Renderizar
         render(teams);
 
-        // Actualizar sello de tiempo para confirmación visual
-        const now = new Date();
-        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0') + ':' + now.getSeconds().toString().padStart(2, '0');
-        
-        // Creamos o actualizamos un pequeño indicador de status
-        let status = document.getElementById('sync-status');
-        if (!status) {
-            status = document.createElement('div');
-            status.id = 'sync-status';
-            status.className = 'text-[10px] text-zinc-700 text-center mt-10 font-mono uppercase tracking-[0.3em]';
-            document.body.appendChild(status);
-        }
-        status.innerText = `Telemetría Sincronizada: ${timeStr}`;
-
     } catch (error) {
-        console.error("Fallo en Pits:", error);
+        console.error("Error de conexión:", error);
     }
 }
 
@@ -79,6 +52,6 @@ function render(teams) {
     }).join('');
 }
 
-// Ejecución inicial y bucle
+// Iniciar y repetir cada 20 segundos
 updateLeaderboard();
-setInterval(updateLeaderboard, 15000); // Bajamos a 15 segundos para más rapidez
+setInterval(updateLeaderboard, 20000);
