@@ -1,28 +1,39 @@
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSh1R3viWQTZFYJa0pbYUVdT0eZfPcdXexgFXBWsEHOC-GtJSf3U6k5bF-n1WBkx7afG14cswrGsWb-/pub?output=csv';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwraDukAcjF87JOC550ef9BPkvodXFl3Nufj_SyzY7accOW78XB-fuo8ResMAHpnTF/exec';
 
 async function updateData() {
     try {
-        const response = await fetch(`${CSV_URL}&nocache=${Math.random()}`, { cache: 'no-store' });
-        const data = await response.text();
-        const rows = data.split('\n').filter(r => r.trim() !== '').slice(1);
+        // Al usar Apps Script, no hay cache. El dato es 100% real.
+        const response = await fetch(WEB_APP_URL);
+        const teamsRaw = await response.json();
         
-        const teams = rows.map(row => {
-            const cols = row.split(',');
-            return { name: cols[0], score: parseInt(cols[1]) || 0, svgId: cols[2]?.trim() };
+        // MAPEADO DINÁMICO: 
+        // Buscamos las columnas sin importar si se llaman "Nombre" o "Escudería"
+        const teams = teamsRaw.map(t => {
+            // Buscamos los valores por su posición o por nombre aproximado
+            const keys = Object.keys(t);
+            return {
+                name: t[keys[0]],  // Columna A (Nombre)
+                score: parseInt(t[keys[1]]) || 0, // Columna B (Puntos)
+                svgId: t[keys[2]]?.toString().trim() || "E01" // Columna C (ID del SVG)
+            };
         }).sort((a, b) => b.score - a.score);
 
         renderLeaderboard(teams);
         renderPodium(teams);
-    } catch (e) { console.error("Error:", e); }
+    } catch (e) {
+        console.error("Error en la conexión de telemetría:", e);
+    }
 }
 
 function renderLeaderboard(teams) {
     const container = document.getElementById('leaderboard');
+    if (!container) return;
+
     container.innerHTML = teams.map((t, i) => `
         <div class="card-escuderia ${i === 0 ? 'top-1' : ''} flex items-center justify-between p-4 rounded-r-xl animate-row">
             <div class="flex items-center gap-4">
                 <span class="text-2xl font-black italic ${i === 0 ? 'text-[#be579b]' : 'text-zinc-600'} w-8">${i+1}</span>
-                <img src="assets/${t.svgId}.svg" class="w-16 h-16 object-contain" onerror="this.src='assets/E01.svg'">
+                <img src="assets/${t.svgId}.svg" class="w-16 h-16 object-contain escuderia-svg" onerror="this.src='assets/E01.svg'">
                 <h2 class="text-2xl font-black uppercase italic tracking-tighter">${t.name}</h2>
             </div>
             <div class="text-right">
@@ -35,14 +46,23 @@ function renderLeaderboard(teams) {
 
 function renderPodium(teams) {
     const container = document.getElementById('podium-container');
+    if (!container) return;
+
+    // Obtenemos los 3 primeros (o valores vacíos si no hay suficientes)
     const p1 = teams[0] || { name: '' };
     const p2 = teams[1] || { name: '' };
     const p3 = teams[2] || { name: '' };
 
-    // Estructura: Plata - Oro - Bronce para coincidir con la foto
+    // Estructura para la foto podio_estatuillas.jpg: PLATA - ORO - BRONCE
     container.innerHTML = `
-        <div class="podium-label mb-48 text-xl">${p2.name}</div> <div class="podium-label mb-64 text-3xl text-[#be579b]">${p1.name}</div> <div class="podium-label mb-40 text-lg">${p3.name}</div> `;
+        <div class="podium-label mb-48 text-xl">${p2.name}</div>
+        <div class="podium-label mb-64 text-3xl text-[#be579b]">${p1.name}</div>
+        <div class="podium-label mb-40 text-lg">${p3.name}</div>
+    `;
 }
 
+// Iniciar proceso
 updateData();
-setInterval(updateData, 20000);
+
+// Actualización cada 10 segundos (Suficiente para que se sienta instantáneo)
+setInterval(updateData, 10000);
