@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NF1GO | Live Leaderboard & Podium</title>
-    
+    <title>NF1GO | Live Leaderboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 
@@ -16,65 +15,64 @@
         }
 
         html { scroll-behavior: smooth; }
-        body { 
-            background-color: var(--f1-dark); 
-            color: white; 
-            font-family: 'Orbitron', sans-serif; 
-            margin: 0; 
-            overflow-x: hidden; 
-        }
+        body { background-color: var(--f1-dark); color: white; font-family: 'Orbitron', sans-serif; margin: 0; }
 
-        /* --- SECCIÓN 1: LEADERBOARD --- */
-        #leaderboard-section {
-            background-image: linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('assets/fondoboard.jpeg');
-            background-size: cover; 
-            background-attachment: fixed; 
+        /* --- CAPAS DE FONDO FIJAS (ESTO NO SE RECARGA) --- */
+        .bg-fixed-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Siempre detrás de todo */
+            background-size: cover;
             background-position: center;
-            padding-bottom: 100px;
+            transition: opacity 0.5s ease;
         }
 
-        .card-escuderia {
-            background: rgba(20, 20, 20, 0.7); 
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-left: 6px solid var(--f1-blue);
+        /* Fondo para el Leaderboard */
+        .bg-leaderboard {
+            background-image: linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('assets/fondoboard.jpeg');
         }
-        .top-1 { border-left-color: var(--f1-pink); background: rgba(190, 87, 155, 0.15); }
 
-        /* --- SECCIÓN 2: PREMIACIÓN (PANTALLA COMPLETA) --- */
-        #awards-section {
+        /* Fondo para el Podio */
+        .bg-podium {
             background-image: linear-gradient(rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.6)), url('assets/podio_estatuillas.png');
-            background-size: cover; 
-            background-position: center bottom; 
-            background-repeat: no-repeat;
-            height: 100vh; 
-            width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-end; 
-            position: relative;
-            padding-top: 80px; 
+            opacity: 0; /* Empieza oculto */
         }
 
-        /* --- ESTRUCTURA DEL PODIO --- */
+        /* --- CONTENEDORES DE DATOS --- */
+        section {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+
+        #leaderboard-section { min-h-screen; padding-bottom: 100px; }
+        
+        #awards-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-top: 80px;
+        }
+
+        /* --- ESTILOS DEL PODIO --- */
         .cylinder-podium {
             width: 100%;
-            max-width: 320px;
+            max-width: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
-            text-align: center;
         }
 
-        /* Los Pedestales (Cilindros) */
         .cylinder-base {
             width: 100%;
             border-radius: 50% / 15%; 
             position: relative;
             box-shadow: inset 0 10px 20px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.8);
-            z-index: 1;
-            /* NUEVO: Centrado del nombre dentro del cilindro */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -84,166 +82,135 @@
         .base-silver { background: linear-gradient(135deg, #1e293b 0%, #94a3b8 50%, #0f172a 100%); border-top: 3px solid #e2e8f0; }
         .base-bronze { background: linear-gradient(135deg, #451a03 0%, #b45309 50%, #27170a 100%); border-top: 3px solid #fbbf24; }
 
-        /* El nombre como placa centrada */
         .podium-name {
-            width: 100%;
-            text-align: center;
             font-weight: 900;
             text-transform: uppercase;
-            text-shadow: 2px 2px 15px #000;
-            padding: 0 10px;
-            z-index: 20;
+            text-shadow: 2px 2px 10px #000;
             color: white !important;
-            white-space: nowrap;
-            position: relative;
+            text-align: center;
         }
 
-        /* La estatuilla (PNG) */
         .statuette-img {
             height: auto;
-            filter: drop-shadow(0 0 20px rgba(0,0,0,1));
+            filter: drop-shadow(0 0 15px rgba(0,0,0,1));
+            margin-bottom: -40px;
             z-index: 5;
-            position: relative;
-            margin-bottom: -40px; /* Hundimiento para que apoye sobre el cilindro */
         }
 
-        /* La cabeza (SVG) */
         .podium-svg { 
             filter: drop-shadow(0 0 15px rgba(0,0,0,0.8)); 
             animation: float 4s ease-in-out infinite;
-            z-index: 10;
-            margin-bottom: 5px;
         }
 
-        /* Animaciones */
-        @keyframes float { 
-            0%, 100% { transform: translateY(0); } 
-            50% { transform: translateY(-15px); } 
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        
+        .card-escuderia {
+            background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05); border-left: 6px solid var(--f1-blue);
         }
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(50px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        .animate-row { animation: slideUp 0.8s ease forwards; }
-
-        .btn-go { 
-            background: var(--f1-pink); 
-            padding: 16px 32px; 
-            border-radius: 4px; 
-            box-shadow: 0 0 25px rgba(190, 87, 155, 0.4); 
-            transition: 0.3s; 
-        }
-        .btn-go:hover { transform: scale(1.05); filter: brightness(1.1); }
+        .top-1 { border-left-color: var(--f1-pink); background: rgba(190, 87, 155, 0.15); }
 
     </style>
 </head>
 <body>
 
-    <section id="leaderboard-section" class="min-h-screen py-12 px-4">
+    <div id="bg-1" class="bg-fixed-layer bg-leaderboard"></div>
+    <div id="bg-2" class="bg-fixed-layer bg-podium"></div>
+
+    <section id="leaderboard-section" class="py-12 px-4">
         <header class="text-center mb-12">
-            <img src="assets/NF1GO.svg" alt="NF1GO Logo" class="max-w-[260px] mx-auto" onerror="this.style.display='none'">
-            <div class="h-1 w-24 bg-[#be579b] mx-auto mt-6 rounded-full opacity-60"></div>
+            <img src="assets/NF1GO.svg" alt="Logo" class="max-w-[260px] mx-auto">
+            <div class="h-1 w-24 bg-[#be579b] mx-auto mt-4 rounded-full"></div>
         </header>
-
-        <div id="leaderboard-container" class="max-w-3xl mx-auto space-y-4 mb-20 text-center text-zinc-600 animate-pulse uppercase italic font-bold">
-            Sincronizando telemetría en vivo...
+        <div id="leaderboard-container" class="max-w-3xl mx-auto space-y-4 mb-20 text-center text-zinc-600 italic font-bold">
+            Sincronizando telemetría...
         </div>
-
-        <div class="text-center">
-            <a href="#awards-section" class="btn-go font-black italic uppercase text-sm tracking-[0.2em] text-white">
-                Ir a Ceremonia de Premiación ↓
-            </a>
+        <div class="text-center pb-12">
+            <a href="#awards-section" class="bg-[#be579b] px-8 py-4 rounded font-black uppercase text-sm tracking-widest">Ir a Premiación ↓</a>
         </div>
     </section>
 
     <section id="awards-section">
-        <div id="podium-display" class="w-full max-w-6xl mx-auto flex items-end justify-center gap-4 md:gap-12 pb-24 px-4">
-            </div>
-
+        <div id="podium-display" class="w-full max-w-6xl mx-auto flex items-end justify-center gap-4 md:gap-12 pb-24 px-4"></div>
         <div class="w-full text-center pb-10">
-            <h2 class="font-black italic text-xl md:text-2xl tracking-[0.6em] text-white/80 uppercase" style="text-shadow: 0 0 15px #000;">
-                Parrilla de Ganadores
-            </h2>
+            <h2 class="font-black italic text-xl md:text-2xl tracking-[0.6em] text-white/80 uppercase">Parrilla de Ganadores</h2>
         </div>
     </section>
 
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwraDukAcjF87JOC550ef9BPkvodXFl3Nufj_SyzY7accOW78XB-fuo8ResMAHpnTF/exec';
 
-        async function updateLeaderboard() {
+        // Lógica para cambiar los fondos suavemente al hacer scroll
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.scrollY;
+            const winHeight = window.innerHeight;
+            const bg1 = document.getElementById('bg-1');
+            const bg2 = document.getElementById('bg-2');
+
+            if (scrollPos > winHeight / 2) {
+                bg1.style.opacity = '0';
+                bg2.style.opacity = '1';
+            } else {
+                bg1.style.opacity = '1';
+                bg2.style.opacity = '0';
+            }
+        });
+
+        async function update() {
             try {
                 const response = await fetch(`${WEB_APP_URL}?t=${Date.now()}`);
                 const data = await response.json();
-                
                 const teams = data.map(t => {
-                    const values = Object.values(t);
-                    return {
-                        name: values[0] || "Escudería",
-                        score: parseInt(values[1]) || 0,
-                        svg: values[2]?.toString().trim() || "E01"
-                    };
+                    const v = Object.values(t);
+                    return { name: v[0], score: parseInt(v[1]) || 0, svg: v[2] || "E01" };
                 }).sort((a, b) => b.score - a.score);
 
                 renderList(teams);
-                renderPodium(teams);
-            } catch (error) {
-                console.error("Error de conexión:", error);
-            }
+                renderAwards(teams);
+            } catch (e) { console.error(e); }
         }
 
         function renderList(teams) {
             const container = document.getElementById('leaderboard-container');
             container.innerHTML = teams.map((team, i) => `
-                <div class="card-escuderia ${i === 0 ? 'top-1' : ''} flex items-center justify-between p-5 rounded-r-2xl animate-row" style="animation-delay: ${i*0.05}s">
-                    <div class="flex items-center gap-6 text-left">
+                <div class="card-escuderia ${i === 0 ? 'top-1' : ''} flex items-center justify-between p-5 rounded-r-2xl">
+                    <div class="flex items-center gap-6">
                         <span class="text-3xl font-black italic ${i === 0 ? 'text-[#be579b]' : 'text-zinc-700'} w-12 text-center">${i+1}</span>
                         <img src="assets/${team.svg}.svg" class="w-16 h-16 object-contain" onerror="this.src='assets/E01.svg'">
-                        <h2 class="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none">${team.name}</h2>
+                        <h2 class="text-xl md:text-3xl font-black uppercase italic tracking-tighter">${team.name}</h2>
                     </div>
                     <div class="text-right">
                         <div class="text-4xl font-black ${i === 0 ? 'text-[#be579b]' : 'text-white'}">${team.score}</div>
-                        <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Puntos</div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function renderPodium(teams) {
+        function renderAwards(teams) {
             const container = document.getElementById('podium-display');
-            const p1 = teams[0] || {name: '', svg: 'E01'};
-            const p2 = teams[1] || {name: '', svg: 'E01'};
-            const p3 = teams[2] || {name: '', svg: 'E01'};
+            const p = [teams[0] || {name:'', svg:'E01'}, teams[1] || {name:'', svg:'E01'}, teams[2] || {name:'', svg:'E01'}];
 
-            // Los nombres ahora se inyectan DENTRO del cylinder-base
             container.innerHTML = `
-                <div class="cylinder-podium animate-row" style="animation-delay: 0.1s">
-                    <img src="assets/${p2.svg}.svg" class="podium-svg w-28 h-28">
+                <div class="cylinder-podium">
+                    <img src="assets/${p[1].svg}.svg" class="podium-svg w-28 h-28">
                     <img src="assets/plata.png" class="statuette-img w-[170px]">
-                    <div class="cylinder-base base-silver h-28 md:h-36">
-                        <div class="podium-name text-lg md:text-xl font-bold">${p2.name}</div>
-                    </div>
+                    <div class="cylinder-base base-silver h-28 md:h-36"><div class="podium-name text-lg md:text-xl font-bold">${p[1].name}</div></div>
                 </div>
-
-                <div class="cylinder-podium animate-row">
-                    <img src="assets/${p1.svg}.svg" class="podium-svg w-36 h-36">
+                <div class="cylinder-podium">
+                    <img src="assets/${p[0].svg}.svg" class="podium-svg w-36 h-36">
                     <img src="assets/oro.png" class="statuette-img w-[210px]">
-                    <div class="cylinder-base base-gold h-40 md:h-56">
-                        <div class="podium-name text-xl md:text-3xl font-black tracking-tighter">${p1.name}</div>
-                    </div>
+                    <div class="cylinder-base base-gold h-40 md:h-56"><div class="podium-name text-xl md:text-3xl font-black tracking-tighter">${p[0].name}</div></div>
                 </div>
-
-                <div class="cylinder-podium animate-row" style="animation-delay: 0.2s">
-                    <img src="assets/${p3.svg}.svg" class="podium-svg w-24 h-24">
+                <div class="cylinder-podium">
+                    <img src="assets/${p[2].svg}.svg" class="podium-svg w-24 h-24">
                     <img src="assets/bronce.png" class="statuette-img w-[150px]">
-                    <div class="cylinder-base base-bronze h-20 md:h-28">
-                        <div class="podium-name text-base md:text-lg font-bold">${p3.name}</div>
-                    </div>
+                    <div class="cylinder-base base-bronze h-20 md:h-28"><div class="podium-name text-base md:text-lg font-bold">${p[2].name}</div></div>
                 </div>
             `;
         }
 
-        updateLeaderboard();
-        setInterval(updateLeaderboard, 5000);
+        update();
+        setInterval(update, 10000);
     </script>
 </body>
 </html>
